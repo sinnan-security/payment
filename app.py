@@ -26,18 +26,17 @@ def micro_service(i):
 @app.route('/health', methods=['GET'])
 def health():
 	for i in config:
-		print(i)
 		if i.startswith('micro'):
-			print('%s_flag=micro_service(config["%s"])'%(i,i))
 			exec('%s_flag=micro_service(config["%s"])'%(i,i))
+	x=locals()
 	db=db_query(config['db'],'SELECT VERSION();')
 	return make_response(jsonify({
 		'service_payment':{
 			'CPU_usage':str(psutil.cpu_percent()),'RAM_usage':str(psutil.virtual_memory().percent),'STORAGE_usage':str(psutil.disk_usage('/').percent),			'SQLITE_connection':db,
 			'API_logstash':'To_Be_Implemented',
 			'API_payment':'To_Be_Implemented',
-			'micro_auth':micro_auth_flag,
-			'micro_notification':micro_notification_flag,
+			'micro_auth':x['micro_auth_flag'],
+			'micro_notification':x['micro_notification_flag'],
 		}}),200)
 
 @app.route('/api/payment/SomeRoute', methods=['GET'])
